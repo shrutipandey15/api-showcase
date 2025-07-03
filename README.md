@@ -84,11 +84,19 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
 The project is organized into a clean and maintainable structure:
 
 /src
-├── components/      # Reusable React components (APICard, Header, Modal, etc.)
-├── data/            # Static data files (apiData.js, categories.js)
-├── App.jsx          # Main application component, manages all state and logic
-├── App.css          # Global styles and Tailwind CSS layers
-├── firebase.js      # Firebase configuration and initialization
-└── main.jsx         # Entry point of the React application
+
+├── components/
+
+├── data/
+
+├── App.jsx
+
+├── App.css
+
+├── firebase.js
+
+└── main.jsx
+
+---
 
 Happy coding!
