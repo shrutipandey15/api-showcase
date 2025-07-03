@@ -9,14 +9,15 @@ const Footer = () => {
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400"></div>
       <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
       <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{animationDelay: '2s'}}></div>
+      
       <div className="relative z-10 container-modern py-12">
         <div className="text-center">
           <div className="flex justify-center items-center gap-3 mb-6">
-            <Sparkles className="text-purple-400 floating" size={24} />
+            <Sparkles className="text-purple-400" style={{animation: 'float 3s ease-in-out infinite'}} size={24} />
             <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
               API Showcase
             </h3>
-            <Sparkles className="text-pink-400 floating-delayed" size={20} />
+            <Sparkles className="text-pink-400" style={{animation: 'float 3s ease-in-out 1.5s infinite'}} size={20} />
           </div>
           
           <div className="flex justify-center items-center gap-2 text-gray-300 text-lg mb-4">

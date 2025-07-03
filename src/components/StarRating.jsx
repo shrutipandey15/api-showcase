@@ -31,9 +31,9 @@ const StarRating = ({ apiId, initialRating = 0, totalRatings = 0, onRate }) => {
                 size={20}
                 className={`transition-all duration-300 ${
                   isHovered 
-                    ? 'text-orange-400 fill-orange-400 star-glow transform scale-110' 
+                    ? 'text-orange-400 fill-orange-400 transform scale-110' 
                     : isRated 
-                    ? 'text-yellow-400 fill-yellow-400 star-glow' 
+                    ? 'text-yellow-400 fill-yellow-400' 
                     : 'text-gray-300 hover:text-gray-400'
                 }`}
               />

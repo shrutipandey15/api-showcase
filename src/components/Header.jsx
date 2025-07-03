@@ -7,13 +7,13 @@ const Header = ({ searchTerm, onSearchChange, selectedCategory, onCategoryChange
       <div className="container-modern py-12">
         <div className="text-center mb-10">
           <div className="flex justify-center items-center gap-3 mb-6">
-            <div className="floating">
+            <div style={{animation: 'float 3s ease-in-out infinite'}}>
               <Sparkles className="text-purple-500" size={32} />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-gradient">
               Public API Showcase
             </h1>
-            <div className="floating-delayed">
+            <div style={{animation: 'float 3s ease-in-out 1.5s infinite'}}>
               <Sparkles className="text-pink-500" size={28} />
             </div>
           </div>
@@ -44,7 +44,7 @@ const Header = ({ searchTerm, onSearchChange, selectedCategory, onCategoryChange
               className="input-modern pl-12 pr-12 py-4 text-lg appearance-none bg-white min-w-[240px] cursor-pointer shadow-lg hover:shadow-xl focus:shadow-colored"
             >
               {categories.map(category => (
-                <option key={category.id} value={category.id} className="py-2">
+                <option key={category.id} value={category.id}>
                   {category.icon} {category.name}
                 </option>
               ))}
@@ -71,9 +71,6 @@ const Header = ({ searchTerm, onSearchChange, selectedCategory, onCategoryChange
             )}
           </button>
         </div>
-        
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400"></div>
-        <div className="absolute top-2 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 opacity-60"></div>
       </div>
     </header>
   );

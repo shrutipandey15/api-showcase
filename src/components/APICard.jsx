@@ -1,21 +1,31 @@
 import React from 'react';
-import { Bookmark, BookmarkCheck, Play, ExternalLink, Zap } from 'lucide-react';
+import { Bookmark, BookmarkCheck, ExternalLink, Zap } from 'lucide-react';
 import { categories } from '../data/categories';
 import StarRating from './StarRating';
 
+const badgeClasses = {
+  animals: 'from-emerald-400 to-cyan-400',
+  data: 'from-blue-400 to-sky-400',
+  fun: 'from-purple-400 to-pink-400',
+  tools: 'from-slate-400 to-gray-500',
+  finance: 'from-yellow-400 to-amber-500',
+  science: 'from-indigo-400 to-violet-500',
+  quotes: 'from-rose-400 to-red-500',
+  books: 'from-orange-400 to-amber-500',
+  food: 'from-lime-400 to-green-500',
+  games: 'from-red-500 to-rose-500',
+  geography: 'from-teal-400 to-cyan-500',
+  music: 'from-pink-500 to-fuchsia-500',
+  health: 'from-green-400 to-emerald-500',
+  business: 'from-sky-500 to-indigo-500',
+  education: 'from-blue-500 to-violet-500',
+  arts: 'from-fuchsia-500 to-purple-600',
+  default: 'from-gray-400 to-gray-500',
+};
+
 const APICard = ({ api, isBookmarked, onToggleBookmark, onTryApi, onRateApi }) => {
   const categoryInfo = categories.find(c => c.id === api.category);
-  
-  const getBadgeClass = (category) => {
-    switch (category) {
-      case 'animals':
-        return 'badge-animals';
-      case 'entertainment':
-        return 'badge-entertainment';
-      default:
-        return 'badge-default';
-    }
-  };
+  const badgeClass = badgeClasses[api.category] || badgeClasses.default;
 
   return (
     <div className="card-modern group relative overflow-hidden">
@@ -35,8 +45,8 @@ const APICard = ({ api, isBookmarked, onToggleBookmark, onTryApi, onRateApi }) =
         </button>
       </div>
       
-      <div className="relative p-8 flex-grow">
-        <div className="mb-6">
+      <div className="relative p-8 flex-grow flex flex-col">
+        <div className="mb-6 flex-grow">
           <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-pink-600 transition-all duration-300">
             {api.name}
           </h3>
@@ -45,14 +55,11 @@ const APICard = ({ api, isBookmarked, onToggleBookmark, onTryApi, onRateApi }) =
           </p>
         </div>
         
-        <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col gap-4 mt-auto">
           <div className="flex items-center justify-between">
-            <span className={`${getBadgeClass(api.category)} transform group-hover:scale-105 transition-transform duration-300`}>
+            <span className={`bg-gradient-to-r ${badgeClass} text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md transform group-hover:scale-105 transition-transform duration-300 capitalize`}>
               {categoryInfo?.icon} {api.category}
             </span>
-            <div className="bg-white rounded-full px-3 py-1 shadow-md border border-gray-100">
-              <span className="text-xs font-medium text-gray-500">API</span>
-            </div>
           </div>
           
           <StarRating 
@@ -64,7 +71,7 @@ const APICard = ({ api, isBookmarked, onToggleBookmark, onTryApi, onRateApi }) =
         </div>
       </div>
       
-      <div className="relative p-8 pt-0">
+      <div className="relative p-8 pt-6">
         <div className="flex gap-4">
           <button
             onClick={() => onTryApi(api)}
