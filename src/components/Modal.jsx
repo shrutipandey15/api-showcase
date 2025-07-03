@@ -1,74 +1,110 @@
 import React from 'react';
-import { Zap, Code } from 'lucide-react';
+import { Zap, Code, X, AlertCircle, CheckCircle } from 'lucide-react';
 
 const Modal = ({ api, onClose, onTestApi, loading, error, apiResponse }) => {
   if (!api) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 animate-fade-in">
+    <div 
+      className="fixed inset-0 modal-backdrop flex items-center justify-center p-4 z-50 animate-fade-in"
+      onClick={onClose}
+    >
       <div 
-        className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col animate-slide-up"
+        className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] flex flex-col animate-scale-in shadow-2xl border border-gray-100 overflow-hidden"
         onClick={(e) => e.stopPropagation()} 
       >
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-900">{api.name}</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full transform translate-x-16 -translate-y-16"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full transform -translate-x-12 translate-y-12"></div>
+          
+          <div className="flex justify-between items-start relative z-10">
+            <div className="flex-1 pr-4">
+              <h2 className="text-3xl font-bold mb-3">{api.name}</h2>
+              <p className="text-purple-100 text-lg leading-relaxed">{api.description}</p>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="p-3 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all duration-300 backdrop-blur-sm"
+            >
+              <X size={24} />
             </button>
           </div>
-          <p className="text-gray-600 mt-2">{api.description}</p>
         </div>
         
-        <div className="p-6 overflow-y-auto">
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">API Endpoint</label>
-            <div className="bg-gray-50 p-3 rounded-lg font-mono text-sm break-all border">
-              <span className="text-green-600 font-semibold">{api.method}</span> {api.endpoint}
+        <div className="p-8 overflow-y-auto flex-1">
+          <div className="mb-8">
+            <label className="block text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <Code size={20} className="text-purple-600" />
+              API Endpoint
+            </label>
+            <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-6 rounded-2xl border-2 border-gray-100 font-mono text-base break-all shadow-inner">
+              <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold mr-3">
+                {api.method}
+              </span>
+              <span className="text-gray-700">{api.endpoint}</span>
             </div>
           </div>
           
           <button
             onClick={() => onTestApi(api)}
             disabled={loading}
-            className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg font-medium hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-success w-full mb-8 py-4 text-lg flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {loading ? (
               <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                Testing...
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white spinner-glow"></div>
+                <span>Testing API...</span>
               </>
             ) : (
               <>
-                <Zap size={18} />
-                Test API Call
+                <Zap size={22} />
+                <span>Test API Call</span>
               </>
             )}
           </button>
           
           {error && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <h4 className="font-medium text-red-800 mb-1">Error</h4>
-              <p className="text-red-600 text-sm">{error}</p>
+            <div className="mb-8 p-6 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-2xl animate-slide-up">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="text-red-500 mt-1 flex-shrink-0" size={24} />
+                <div>
+                  <h4 className="font-bold text-red-800 text-lg mb-2">Request Failed</h4>
+                  <p className="text-red-700">{error}</p>
+                </div>
+              </div>
             </div>
           )}
           
           {apiResponse && (
-            <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2"><Code size={16} /> Live Response</label>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm max-h-60">
+            <div className="mb-8 animate-slide-up">
+              <label className="block text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <CheckCircle className="text-emerald-500" size={20} />
+                Live Response
+                <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 text-white px-3 py-1 rounded-full text-sm font-bold ml-2 animate-pulse">
+                  LIVE
+                </span>
+              </label>
+              <pre className="code-block overflow-x-auto text-sm max-h-80 shadow-2xl">
                 {JSON.stringify(apiResponse, null, 2)}
               </pre>
             </div>
           )}
           
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2"><Code size={16} /> Sample Response</label>
-            <pre className="bg-gray-50 text-gray-800 p-4 rounded-lg overflow-x-auto text-sm border max-h-60">
+          <div>
+            <label className="block text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <Code className="text-blue-600" size={20} />
+              Sample Response
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 text-white px-3 py-1 rounded-full text-sm font-bold ml-2">
+                EXAMPLE
+              </span>
+            </label>
+            <pre className="code-block-light overflow-x-auto text-sm max-h-80 shadow-lg">
               {JSON.stringify(api.sampleResponse, null, 2)}
             </pre>
           </div>
         </div>
+        
+        <div className="h-2 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400"></div>
       </div>
     </div>
   );

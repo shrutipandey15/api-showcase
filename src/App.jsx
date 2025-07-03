@@ -5,6 +5,7 @@ import Header from './components/Header';
 import APIGrid from './components/APIGrid';
 import Footer from './components/Footer';
 import Modal from './components/Modal';
+import { BarChart3, Users, Star, TrendingUp } from 'lucide-react';
 import { db } from './firebase'; 
 import { collection, getDocs, doc, setDoc, increment } from "firebase/firestore";
 
@@ -14,7 +15,17 @@ const App = () => {
   const [filteredApis, setFilteredApis] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [bookmarkedApis, setBookmarkedApis] = useState([]);
+  
+  const [bookmarkedApis, setBookmarkedApis] = useState(() => {
+    try {
+      const savedBookmarks = localStorage.getItem('bookmarkedApis');
+      return savedBookmarks ? JSON.parse(savedBookmarks) : [];
+    } catch (error) {
+      console.error("Could not parse bookmarks from localStorage", error);
+      return [];
+    }
+  });
+
   const [showOnlyBookmarked, setShowOnlyBookmarked] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [apiResponse, setApiResponse] = useState(null);
@@ -22,9 +33,14 @@ const App = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const savedBookmarks = JSON.parse(localStorage.getItem('bookmarkedApis')) || [];
-    setBookmarkedApis(savedBookmarks);
-    
+    try {
+      localStorage.setItem('bookmarkedApis', JSON.stringify(bookmarkedApis));
+    } catch (error) {
+      console.error("Could not save bookmarks to localStorage", error);
+    }
+  }, [bookmarkedApis]);
+
+  useEffect(() => {
     const fetchRatings = async () => {
       try {
         const ratingsCollection = collection(db, "ratings");
@@ -57,15 +73,12 @@ const App = () => {
 
   useEffect(() => {
     let filtered = apisWithRatings;
-
     if (showOnlyBookmarked) {
       filtered = filtered.filter(api => bookmarkedApis.includes(api.id));
     }
-
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(api => api.category === selectedCategory);
     }
-    
     if (searchTerm) {
       const lowercasedTerm = searchTerm.toLowerCase();
       filtered = filtered.filter(api => 
@@ -73,13 +86,8 @@ const App = () => {
         api.description.toLowerCase().includes(lowercasedTerm)
       );
     }
-    
     setFilteredApis(filtered);
   }, [apisWithRatings, selectedCategory, searchTerm, showOnlyBookmarked, bookmarkedApis]);
-
-  useEffect(() => {
-    localStorage.setItem('bookmarkedApis', JSON.stringify(bookmarkedApis));
-  }, [bookmarkedApis]);
   
   const handleRateApi = async (apiId, newRating) => {
     const ratingRef = doc(db, "ratings", String(apiId));
@@ -162,8 +170,17 @@ const App = () => {
     setError(null);
   };
 
+  const totalRatings = Object.values(ratings).reduce((sum, rating) => sum + rating.count, 0);
+  const averageRating = totalRatings > 0 
+    ? Object.values(ratings).reduce((sum, rating) => sum + (rating.average * rating.count), 0) / totalRatings 
+    : 0;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-x-hidden">
+      <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
+      <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-cyan-200 to-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{animationDelay: '2s'}}></div>
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-72 h-72 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{animationDelay: '4s'}}></div>
+      
       <Header
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
@@ -173,17 +190,56 @@ const App = () => {
         onShowBookmarks={toggleShowOnlyBookmarked}
         showOnlyBookmarked={showOnlyBookmarked}
       />
-      <main className="max-w-7xl mx-auto px-6 py-12">
-        <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 px-6 py-3">
-            <span className="text-gray-600">
-              Showing {filteredApis.length} of {apis.length} APIs
+      
+      <main className="container-modern py-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <div className="glass rounded-2xl p-6 text-center shadow-lg border border-white/20 backdrop-blur-sm">
+            <div className="flex justify-center mb-3">
+              <BarChart3 className="text-purple-600" size={32} />
+            </div>
+            <div className="text-2xl font-bold text-gray-800 mb-1">{apis.length}</div>
+            <div className="text-sm text-gray-600 font-medium">Total APIs</div>
+          </div>
+          
+          <div className="glass rounded-2xl p-6 text-center shadow-lg border border-white/20 backdrop-blur-sm">
+            <div className="flex justify-center mb-3">
+              <Star className="text-yellow-500" size={32} />
+            </div>
+            <div className="text-2xl font-bold text-gray-800 mb-1">{averageRating.toFixed(1)}</div>
+            <div className="text-sm text-gray-600 font-medium">Avg Rating</div>
+          </div>
+          
+          <div className="glass rounded-2xl p-6 text-center shadow-lg border border-white/20 backdrop-blur-sm">
+            <div className="flex justify-center mb-3">
+              <Users className="text-blue-600" size={32} />
+            </div>
+            <div className="text-2xl font-bold text-gray-800 mb-1">{totalRatings}</div>
+            <div className="text-sm text-gray-600 font-medium">Total Ratings</div>
+          </div>
+          
+          <div className="glass rounded-2xl p-6 text-center shadow-lg border border-white/20 backdrop-blur-sm">
+            <div className="flex justify-center mb-3">
+              <TrendingUp className="text-emerald-600" size={32} />
+            </div>
+            <div className="text-2xl font-bold text-gray-800 mb-1">{bookmarkedApis.length}</div>
+            <div className="text-sm text-gray-600 font-medium">Bookmarked</div>
+          </div>
+        </div>
+
+        <div className="flex justify-center mb-10">
+          <div className="glass rounded-2xl shadow-lg border border-white/20 backdrop-blur-sm px-8 py-4">
+            <span className="text-gray-700 text-lg font-medium">
+              Showing <span className="text-gradient font-bold text-xl">{filteredApis.length}</span> of{' '}
+              <span className="text-gradient font-bold text-xl">{apis.length}</span> APIs
               {bookmarkedApis.length > 0 && (
-                <span className="ml-2 text-yellow-600">• {bookmarkedApis.length} bookmarked</span>
+                <span className="ml-4 text-yellow-600">
+                  • <span className="font-bold">{bookmarkedApis.length}</span> bookmarked
+                </span>
               )}
             </span>
           </div>
         </div>
+
         <APIGrid
           apis={filteredApis}
           bookmarkedApis={bookmarkedApis}
@@ -193,7 +249,9 @@ const App = () => {
           showOnlyBookmarked={showOnlyBookmarked}
         />
       </main>
+      
       <Footer />
+      
       {activeModal && (
         <Modal 
           api={activeModal} 
